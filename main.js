@@ -192,6 +192,15 @@ navToggle.addEventListener('click', () => {
   }
 });
 
+// Close mobile menu when jumping to in-page anchors from nav
+document.querySelectorAll('#nav-menu a[href^="#"]').forEach((link) => {
+  link.addEventListener('click', () => {
+    if (navMenu.classList.contains('mobile-open')) {
+      closeMobileMenu();
+    }
+  });
+});
+
 // ---- Scroll reveal ----
 const reveals = document.querySelectorAll('.reveal');
 

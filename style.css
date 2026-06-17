@@ -529,6 +529,156 @@ ul, ol { list-style: none; }
 .program-link:hover { gap: 0.85rem; }
 
 /* =============================================
+   CLASS SCHEDULES (in-page, continuous scroll)
+   ============================================= */
+.schedule-section {
+  scroll-margin-top: 5.5rem;
+  padding: 5.5rem 0 6rem;
+}
+
+.schedule-section--alt {
+  background: var(--card-bg);
+}
+
+.schedule-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 var(--section-px);
+}
+
+.schedule-title {
+  margin-bottom: 1.25rem;
+}
+
+.schedule-lede {
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: rgba(245, 240, 232, 0.78);
+  max-width: 42rem;
+  line-height: 1.75;
+  margin-bottom: 2.5rem;
+}
+
+.schedule-lede strong {
+  font-weight: 500;
+  color: var(--off-white);
+}
+
+.schedule-lede a {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.schedule-lede a:hover {
+  text-decoration: underline;
+}
+
+.schedule-day {
+  margin-top: 2.75rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(245, 240, 232, 0.08);
+}
+
+.schedule-day:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.schedule-day-title {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.schedule-list > li {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  gap: 1rem 1.5rem;
+  align-items: baseline;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid rgba(245, 240, 232, 0.06);
+  font-size: 0.88rem;
+  font-weight: 300;
+  color: rgba(245, 240, 232, 0.88);
+  line-height: 1.5;
+}
+
+.schedule-time {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.schedule-class {
+  font-weight: 500;
+  color: var(--off-white);
+}
+
+.schedule-meta {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.schedule-dates {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(245, 240, 232, 0.1);
+}
+
+.schedule-dates-title {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+
+.schedule-dates ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: 0.88rem;
+  color: rgba(245, 240, 232, 0.75);
+  font-weight: 300;
+}
+
+.schedule-register {
+  margin-top: 2.5rem;
+  text-align: left;
+}
+
+.schedule-register-btn {
+  display: inline-block;
+}
+
+@media (max-width: 600px) {
+  .schedule-list > li {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+
+  .schedule-time {
+    margin-bottom: 0.1rem;
+  }
+}
+
+/* =============================================
    MISSION
    ============================================= */
 .mission {
@@ -819,5 +969,6 @@ footer a:hover { color: var(--gold); }
   .mission { padding: 5rem 1.5rem; }
   .programs { padding: 4rem 1.25rem; }
   .programs-grid { gap: 2px; }
+  .schedule-section { padding: 4rem 0 4.5rem; }
   footer { flex-direction: column; text-align: center; }
 }
