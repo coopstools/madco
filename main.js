@@ -2,6 +2,111 @@
    Metro Atlanta Dance — main.js
    ============================================= */
 
+// ---- Hours from Google Sheet (tab named "active") ----
+// Uses gviz JSONP (CSV has no CORS for browser fetch).
+const HOURS_SPREADSHEET_ID = '1WWdQwXcYwcir6XWMVuoReHvPzxOB8tI7GAAlbeIb6OM';
+const HOURS_SHEET_TAB = 'active';
+
+function loadHoursFromGoogleSheet() {
+  const headingEl = document.getElementById('hours-heading');
+  const listEl = document.getElementById('hours-list');
+  if (!headingEl || !listEl) return;
+
+  const fallbackHeading = headingEl.textContent;
+  const fallbackListHtml = listEl.innerHTML;
+
+  function restoreDom() {
+    headingEl.textContent = fallbackHeading;
+    listEl.innerHTML = fallbackListHtml;
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function cellValue(row, index) {
+    const c = row.c?.[index];
+    if (!c || c.v == null) return '';
+    return String(c.v).trim();
+  }
+
+  const priorRoot = window.google;
+  const priorSetter = priorRoot?.visualization?.Query?.setResponse;
+
+  window.google = priorRoot || {};
+  window.google.visualization = window.google.visualization || {};
+  window.google.visualization.Query = window.google.visualization.Query || {};
+
+  function cleanupGoogleNamespace() {
+    if (!priorRoot) {
+      try {
+        delete window.google;
+      } catch (_) {
+        window.google = undefined;
+      }
+    } else {
+      window.google.visualization.Query.setResponse = priorSetter;
+    }
+  }
+
+  window.google.visualization.Query.setResponse = function onHoursResponse(resp) {
+    window.google.visualization.Query.setResponse = priorSetter;
+
+    try {
+      if (!resp || resp.status !== 'ok' || !resp.table?.rows?.length) {
+        restoreDom();
+        return;
+      }
+
+      const rows = resp.table.rows;
+      let i = 0;
+      const title = cellValue(rows[0], 0);
+      const subtitle = cellValue(rows[0], 1);
+      if (title && !subtitle) {
+        headingEl.textContent = title;
+        i = 1;
+      }
+
+      const parts = [];
+      for (; i < rows.length; i++) {
+        const day = cellValue(rows[i], 0);
+        const hours = cellValue(rows[i], 1);
+        if (!day && !hours) continue;
+        if (!day) continue;
+        parts.push(
+          `<div class="hours-row"><dt>${escapeHtml(day)}</dt><dd>${escapeHtml(hours || '—')}</dd></div>`
+        );
+      }
+
+      if (!parts.length) {
+        restoreDom();
+        return;
+      }
+
+      listEl.innerHTML = parts.join('');
+    } catch (_) {
+      restoreDom();
+    } finally {
+      cleanupGoogleNamespace();
+    }
+  };
+
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = `https://docs.google.com/spreadsheets/d/${HOURS_SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(HOURS_SHEET_TAB)}`;
+  script.onerror = () => {
+    cleanupGoogleNamespace();
+    restoreDom();
+  };
+  document.head.appendChild(script);
+}
+
+loadHoursFromGoogleSheet();
+
 // ---- Year in footer ----
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
