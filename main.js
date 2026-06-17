@@ -201,6 +201,58 @@ document.querySelectorAll('#nav-menu a[href^="#"]').forEach((link) => {
   });
 });
 
+// ---- Schedule boards (filter chips + class cards) ----
+function parseFilterTokens(value) {
+  return String(value || '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+}
+
+function applyScheduleBoardFilter(board, activeFilter) {
+  const cards = board.querySelectorAll('.class-card');
+  const dayBlocks = board.querySelectorAll('.schedule-day-block');
+  const emptyMsg = board.querySelector('.schedule-empty');
+
+  let anyVisible = false;
+  cards.forEach((card) => {
+    const tokens = parseFilterTokens(card.getAttribute('data-filters'));
+    const show = activeFilter === 'all' || tokens.includes(activeFilter);
+    card.hidden = !show;
+    card.setAttribute('aria-hidden', show ? 'false' : 'true');
+    if (show) anyVisible = true;
+  });
+
+  dayBlocks.forEach((day) => {
+    const hasVisible = [...day.querySelectorAll('.class-card')].some((c) => !c.hidden);
+    day.hidden = !hasVisible;
+  });
+
+  if (emptyMsg) {
+    emptyMsg.hidden = anyVisible;
+    emptyMsg.setAttribute('aria-hidden', anyVisible ? 'true' : 'false');
+  }
+}
+
+function initScheduleBoard(board) {
+  const chips = board.querySelectorAll('.filter-chip');
+  if (!chips.length) return;
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const val = chip.dataset.filter;
+      chips.forEach((c) => {
+        const on = c === chip;
+        c.classList.toggle('is-active', on);
+        c.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      applyScheduleBoardFilter(board, val || 'all');
+    });
+  });
+}
+
+document.querySelectorAll('[data-schedule-board]').forEach(initScheduleBoard);
+
 // ---- Scroll reveal ----
 const reveals = document.querySelectorAll('.reveal');
 
